@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: notificacoes-app-empresas
+type: Opaque
+data:
+  KEYCLOAK_JSON: S0VZQ0xPQUtfSlNPTj17CiAgInJlYWxtIjogInRlc3R6YW8iLAogICJhdXRoLXNlcnZlci11cmwiOiAiaHR0cDovLzM0LjE3MS4xODcuMjQ2OjgwODAvYXV0aCIsCiAgInNzbC1yZXF1aXJlZCI6ICJleHRlcm5hbCIsCiAgInJlc291cmNlIjogIm5lc3QiLAogICJ2ZXJpZnktdG9rZW4tYXVkaWVuY2UiOiB0cnVlLAogICJjcmVkZW50aWFscyI6IHsKICAgICJzZWNyZXQiOiAiM2JlYTQwZjQtNTJhNi00NTdmLWFkODYtNGY5MDBjMWUxZmQ5IgogIH0sCiAgInVzZS1yZXNvdXJjZS1yb2xlLW1hcHBpbmdzIjogdHJ1ZSwKICAiY29uZmlkZW50aWFsLXBvcnQiOiAwLAogICJwb2xpY3ktZW5mb3JjZXIiOiB7fQp9
+  DB_PASSWORD: c3Ryb25ncGFzc3dvcmQ=
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notificacoes-app-empresas
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: notificacoes-app-empresas
+  template:
+    metadata:
+      labels:
+        app: notificacoes-app-empresas
+    spec:
+      containers:
+        - name: notificacoes-app-empresas
+          image: eshows/notificacoes-app-empresas:latest
+          ports:
+            - containerPort: 3232
+          env:
+            - name: REDIS_HOST
+              value: redis-17882.c281.us-east-1-2.ec2.cloud.redislabs.com
+
+            - name: REDIS_PORT
+              value: "17882"
+
+            - name: PORT
+              value: "3232"
+
+            - name: REDIS_USERNAME
+              value: eshows_notificacoes
+
+            - name: REDIS_PASSWORD
+              value: Eshows23*
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notificacoes-app-empresas-service
+spec:
+  ports:
+    - port: 3232
+  selector:
+    app: notificacoes-app-empresas
+  type: ClusterIP
